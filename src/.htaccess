@@ -30,8 +30,7 @@ FileETag None
 	Header set Cache-Control "no-cache"
 	Header set X-Content-Type-Options "nosniff"
 	Header set Referrer-Policy "no-referrer"
-	# A day to begin with: raise it to a year (31536000) once HTTPS has been seen working.
-	Header always set Strict-Transport-Security "max-age=86400"
+	Header always set Strict-Transport-Security "max-age=31536000"
 
 	# The app, for / and index.html alike. Header only: no page in a frame on another site.
 	Header set Content-Security-Policy "{{csp-app}}; frame-ancestors 'none'"

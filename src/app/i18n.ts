@@ -165,6 +165,9 @@ const pl = {
 	},
 	preview: {
 		passed: "Zamazane miejsca są puste — dane spod prostokątów zostały trwale usunięte.",
+		/** On a phone, where the band would otherwise take the page's room. */
+		passedShort: "Zamazanych danych nie ma już w pliku.",
+		lookShort: "Plik jest w pobranych. Sprawdź, czy niczego nie pominięto.",
 		/** Saved with pages turned or removed, but nothing redacted. */
 		savedClean: "Plik zapisany od nowa, bez metadanych.",
 		removedPages: (n: number) => (n > 1 ? "Usuniętych stron nie ma w pliku." : "Usuniętej strony nie ma w pliku."),

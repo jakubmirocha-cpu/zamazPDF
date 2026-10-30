@@ -24,8 +24,10 @@ const ZOOM_STEPS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2
 const FIT_MAX = 1.5;
 /** Around the pages. `top`: room for the hint line. On a phone the page runs to the screen's edges, and the bar over the bottom of the last page can be scrolled clear of it. */
 const WIDE_SPACE = { gap: 24, padding: 32, top: 64, bottom: 32 };
-const PHONE_SPACE = { gap: 8, padding: 0, top: 0, bottom: 72 };
+const PHONE_SPACE = { gap: 8, padding: 0, top: 0, bottom: 56 };
 type Space = typeof WIDE_SPACE;
+/** How much of the screen the list of personal data takes on a phone (styles.css). */
+const PHONE_LIST_SHARE = 0.5;
 /** Scrolled this far (CSS pixels) in one direction, the bar on a phone goes or comes back. */
 const BAR_SCROLL = 8;
 /** Three in a row on a 360-pixel screen. */
@@ -169,7 +171,12 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 	// Laid out again only when a page's size on screen changes (zoom, a page turned or removed), not with
 	// every redaction.
 	const shape = pages.map((p) => `${p.id}:${p.rotation}`).join(" ");
-	const layout = useMemo(() => pageLayout(pages, zoom * CSS_PX_PER_PT, viewport?.width ?? 0, space), [shape, zoom, viewport?.width, space]);
+	// On a phone what lies over the page must not hide it for good: with the search open above, the top of the
+	// document scrolls clear of it, and with the list of personal data below, the end of the document does.
+	const [stripHeight, setStripHeight] = useState(0);
+	const listRoom = narrow && personal.open ? Math.round((viewport?.height ?? 0) * PHONE_LIST_SHARE) : 0;
+	const pageSpace = useMemo(() => ({ ...space, top: space.top + stripHeight, bottom: space.bottom + listRoom }), [space, stripHeight, listRoom]);
+	const layout = useMemo(() => pageLayout(pages, zoom * CSS_PX_PER_PT, viewport?.width ?? 0, pageSpace), [shape, zoom, viewport?.width, pageSpace]);
 	const deviceScale = useSettled(viewport ? layout.scale * viewport.dpr : 0, 150);
 
 	// Keep the same spot of the document under the anchor when the layout changes: zooming, or a page turned
@@ -343,8 +350,10 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 	boxes.current = layout.boxes;
 	const gap = useRef(space.gap);
 	gap.current = space.gap;
+	const overTop = useRef(stripHeight);
+	overTop.current = stripHeight;
 	const goTo = useCallback((index: number) => {
-		viewer.current!.scrollTop = boxes.current[index]!.y - gap.current;
+		viewer.current!.scrollTop = boxes.current[index]!.y - gap.current - overTop.current;
 		setSheet(null);
 	}, []);
 
@@ -380,11 +389,14 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 		if (shownKey && !still) reveal();
 	}, [shownKey, still]);
 
-	const redactAll = () =>
+	const redactAll = () => {
 		addRedactions(
 			search.open.flatMap((hit) => hit.rects.map((rect) => ({ pageId: hit.pageId, rect }))),
 			"search",
 		);
+		// On a phone the strip goes with the job done, unless other forms of the word are still on offer.
+		if (narrow && (search.suggested || search.similar.length === 0)) closeSearch();
+	};
 
 	const redactPersonal = () =>
 		addRedactions(
@@ -408,6 +420,18 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 
 	const askToClose = () => (unsaved && !preview ? setClosing(true) : onClose());
 	const showSearch = !preview && (!narrow || searchOpen || !!search.query);
+
+	const strip = useRef<HTMLDivElement>(null);
+	const stripOnTop = narrow && showSearch && !search.suggested;
+	useLayoutEffect(() => {
+		const el = strip.current;
+		if (!stripOnTop || !el) return setStripHeight(0);
+		const measure = () => setStripHeight(el.offsetHeight);
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [stripOnTop]);
 
 	return (
 		<div className={["document", preview && "is-preview", narrow && "is-phone"].filter(Boolean).join(" ")}>
@@ -501,7 +525,15 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 					<CheckIcon />
 					<div className="passed-body">
 						<p>
-							<strong>{preview.redacted ? t.preview.passed : t.preview.savedClean}</strong> {t.preview.look(preview.name)}
+							{narrow ? (
+								<>
+									<strong>{preview.redacted ? t.preview.passedShort : t.preview.savedClean}</strong> {t.preview.lookShort}
+								</>
+							) : (
+								<>
+									<strong>{preview.redacted ? t.preview.passed : t.preview.savedClean}</strong> {t.preview.look(preview.name)}
+								</>
+							)}
 							{preview.redacted && preview.keptText && ` ${t.preview.keptText}`}
 							{preview.imagePages.length > 0 && ` ${t.preview.imagePages(preview.imagePages)}`}
 							{preview.hiddenPages.length > 0 && ` ${t.preview.hiddenPages(preview.hiddenPages)}`}
@@ -538,6 +570,7 @@ export function DocumentScreen({ doc, preview, signed, onSignedSeen, onSaved, on
 					search={search}
 					total={pages.length}
 					input={searchInput}
+					strip={strip}
 					onRedactAll={redactAll}
 					personalOpen={personal.open}
 					onPersonal={togglePersonal}

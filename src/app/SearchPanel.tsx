@@ -112,6 +112,8 @@ type Props = {
 	search: Search;
 	total: number;
 	input: RefObject<HTMLInputElement | null>;
+	/** The strip itself, to measure on a phone, where it lies over the page. */
+	strip?: RefObject<HTMLDivElement | null>;
 	onRedactAll: () => void;
 	/** "Znajdź dane osobowe": whether its list is open, and opening or closing it. */
 	personalOpen: boolean;
@@ -120,7 +122,7 @@ type Props = {
 	onClose?: () => void;
 };
 
-export function SearchPanel({ search, total, input, onRedactAll, personalOpen, onPersonal, onClose }: Props) {
+export function SearchPanel({ search, total, input, strip, onRedactAll, personalOpen, onPersonal, onClose }: Props) {
 	// Opened on demand to type in: the keyboard comes with it. Not for a suggestion, which comes up by itself.
 	useEffect(() => {
 		if (onClose && !search.query) input.current?.focus();
@@ -135,6 +137,7 @@ export function SearchPanel({ search, total, input, onRedactAll, personalOpen, o
 		if (search.noText.length > 0) notes.push(t.search.noText(pageList(search.noText), search.noText.length));
 		if (search.scans.length > 0) notes.push(t.search.scans(pageList(search.scans), search.scans.length));
 	}
+	const showSteps = !onClose || search.open.length > 1;
 	const count =
 		search.open.length > 0
 			? t.search.count(search.current + 1, search.open.length)
@@ -143,7 +146,7 @@ export function SearchPanel({ search, total, input, onRedactAll, personalOpen, o
 				: t.search.none;
 
 	return (
-		<div className={search.suggested ? "search is-suggestion" : "search"} role="search">
+		<div ref={strip} className={search.suggested ? "search is-suggestion" : "search"} role="search">
 			<div className="search-row">
 				<label className="search-label" htmlFor="search-input">
 					{t.search.label}
@@ -185,31 +188,39 @@ export function SearchPanel({ search, total, input, onRedactAll, personalOpen, o
 				{searching && (
 					<>
 						<div className="search-nav">
-							<button type="button" className="button-quiet zoom-step" aria-label={t.search.previous} disabled={search.open.length === 0} onClick={() => search.step(-1)}>
-								‹
-							</button>
+							{/* With one place or none there is nowhere to go, and on a phone no room to spare. */}
+							{showSteps && (
+								<button type="button" className="button-quiet zoom-step" aria-label={t.search.previous} disabled={search.open.length === 0} onClick={() => search.step(-1)}>
+									‹
+								</button>
+							)}
 							<output className="search-count" aria-live="polite">
 								{count}
 							</output>
-							<button type="button" className="button-quiet zoom-step" aria-label={t.search.next} disabled={search.open.length === 0} onClick={() => search.step(1)}>
-								›
-							</button>
+							{showSteps && (
+								<button type="button" className="button-quiet zoom-step" aria-label={t.search.next} disabled={search.open.length === 0} onClick={() => search.step(1)}>
+									›
+								</button>
+							)}
 						</div>
 						<button type="button" className="button-strong" disabled={search.open.length === 0} onClick={onRedactAll}>
 							{t.search.redactAll(search.open.length)}
 						</button>
 					</>
 				)}
-				<button
-					type="button"
-					className="button-quiet search-personal"
-					title={t.personal.buttonHint}
-					aria-expanded={personalOpen}
-					aria-controls="personal-panel"
-					onClick={onPersonal}
-				>
-					{t.personal.button}
-				</button>
+				{/* On a phone it is in the menu: here it would only take room from the page. */}
+				{!onClose && (
+					<button
+						type="button"
+						className="button-quiet search-personal"
+						title={t.personal.buttonHint}
+						aria-expanded={personalOpen}
+						aria-controls="personal-panel"
+						onClick={onPersonal}
+					>
+						{t.personal.button}
+					</button>
+				)}
 			</div>
 			{searching && search.similar.length > 0 && (
 				<div className="search-similar">
