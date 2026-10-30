@@ -1,0 +1,48 @@
+# zamazpdf.pl on Apache (home.pl). The folder dist/ goes on the server as it is, this file with it.
+# The Content-Security-Policy values come from the pages themselves, put in by scripts/build.mjs.
+
+# One address: https://zamazpdf.pl/. Needs the SSL certificate active on the domain first.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{HTTPS} !=on [OR]
+	RewriteCond %{HTTP_HOST} ^www\. [NC]
+	RewriteRule ^ https://zamazpdf.pl%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_mime.c>
+	AddType text/javascript .js
+	AddType application/manifest+json .webmanifest
+	AddType text/plain .txt
+	AddCharset utf-8 .html .css .js .txt
+</IfModule>
+
+# The engine is 14 MB of text: it packs to about 5 MB.
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/manifest+json text/plain
+</IfModule>
+
+# The browser asks every time whether a file changed, and is told "not modified" by its date. No ETag: with
+# compression Apache changes it, and then no file would ever count as not modified.
+FileETag None
+
+<IfModule mod_headers.c>
+	Header unset ETag
+	Header set Cache-Control "no-cache"
+	Header set X-Content-Type-Options "nosniff"
+	Header set Referrer-Policy "no-referrer"
+	# A day to begin with: raise it to a year (31536000) once HTTPS has been seen working.
+	Header always set Strict-Transport-Security "max-age=86400"
+
+	# The app, for / and index.html alike. Header only: no page in a frame on another site.
+	Header set Content-Security-Policy "{{csp-app}}; frame-ancestors 'none'"
+
+	# The information pages have no script at all.
+	<FilesMatch "^(jak-to-dziala|polityka-prywatnosci)\.html$">
+		Header set Content-Security-Policy "{{csp-pages}}; frame-ancestors 'none'"
+	</FilesMatch>
+
+	# A service worker has no <meta>: only this header limits what it may reach, its own server and nothing else.
+	<Files "sw.js">
+		Header set Content-Security-Policy "default-src 'none'; connect-src 'self'"
+	</Files>
+</IfModule>

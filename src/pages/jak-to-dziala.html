@@ -1,0 +1,124 @@
+<!doctype html>
+<!-- An information page: plain HTML with no script at all, styled by the app's stylesheet,
+     which has its fonts inside. The CSP lets in that stylesheet and nothing else: no script, no connection.
+     Written for anyone, without technical terms; those belong in the privacy policy. -->
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; font-src data:; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#ebeae6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Zamaż PDF zakrywa na czarno PESEL, nazwisko, adres czy numer konta w dokumencie PDF. Wszystko dzieje się na Twoim urządzeniu.">
+<title>Jak to działa — Zamaż PDF</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20x%3D%223%22%20y%3D%2210%22%20width%3D%2226%22%20height%3D%2212%22%20fill%3D%22%231c1c1c%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="info">
+	<header class="info-side">
+		<a class="wordmark" href="index.html"><span class="wordmark-mark" aria-hidden="true"></span>Zamaż PDF</a>
+		<nav class="info-nav" aria-label="O programie">
+			<a href="jak-to-dziala.html" aria-current="page">Jak to działa</a>
+			<a href="polityka-prywatnosci.html">Polityka prywatności</a>
+			<a href="https://github.com/jakubmirocha-cpu/zamazPDF" rel="noreferrer">Kod źródłowy</a>
+		</nav>
+	</header>
+
+	<main class="info-text">
+		<h1>Jak to działa</h1>
+		<p class="info-lead">Zamaż PDF zakrywa na czarno to, czego nie chcesz pokazać w dokumencie: PESEL, nazwisko, adres czy numer konta. Wszystko dzieje się na Twoim urządzeniu.</p>
+
+		<section aria-labelledby="kroki">
+			<h2 id="kroki">Jak zamazać dokument</h2>
+			<div class="info-body">
+				<ol class="info-steps">
+					<li>
+						<strong>Otwórz plik.</strong>
+						Na komputerze przeciągnij plik PDF do okna programu albo kliknij „Wybierz plik PDF”. Na telefonie stuknij „Wybierz plik PDF” i wskaż plik.
+					</li>
+					<li>
+						<strong>Zamaż.</strong>
+						Na komputerze zaznacz myszką to, co chcesz ukryć: przytrzymaj przycisk i przeciągnij. Na telefonie stuknij słowo albo przytrzymaj palec i przeciągnij. W tym miejscu pojawi się czarny prostokąt. Możesz też wpisać nazwisko albo PESEL w pole „Szukaj i zamaż”. Program znajdzie je na wszystkich stronach, a przycisk „Zamaż wszystkie” zakryje je za jednym razem. Przycisk „Znajdź dane osobowe” pokaże numery PESEL, numery kont, telefony i adresy, które są w dokumencie.
+					</li>
+					<li>
+						<strong>Zapisz.</strong>
+						Wybierz „Zapisz bezpieczną kopię”, na telefonie „Zapisz”. Nowy plik trafi do pobranych plików, ze słowem „ZAMAZANY” na początku nazwy. Twój plik zostaje taki, jaki był. Jeśli na ekranie jest też „Udostępnij”, możesz od razu przekazać kopię dalej, na przykład do poczty.
+					</li>
+				</ol>
+			</div>
+		</section>
+
+		<section aria-labelledby="zamazane">
+			<h2 id="zamazane">Zamazane znaczy usunięte</h2>
+			<div class="info-body">
+				<p>Czarny prostokąt to nie naklejka, którą da się odkleić. To, co było pod nim, znika z pliku na zawsze. Nie da się tego odczytać, skopiować ani odzyskać: ani w programie do plików PDF, ani przez sztuczną inteligencję.</p>
+				<p>Zanim program zapisze plik, sam go sprawdza. Gdyby pod którymś prostokątem coś zostało, pliku nie zapisze. W zapisanym pliku nie ma też ukrytych informacji, na przykład kto i kiedy utworzył dokument.</p>
+				<p>Czasem na stronie jest tekst, którego nie widać: biały na białym tle, przykryty czymś albo dodany przez skaner. Taką stronę program zapisze jako obraz. Tego tekstu już w pliku nie ma, ale tej strony nie da się potem przeszukiwać ani zaznaczać na niej tekstu.</p>
+				<figure class="info-figure" data-ui="">
+					<div class="specimen" role="img" aria-label="Przykład: w umowie zamazane nazwisko, PESEL i adres">
+						<p class="specimen-title">Umowa najmu nr 12/2026</p>
+						<p>zawarta 3 marca 2026 r. w Krakowie</p>
+						<p>Najemca: Jan <span class="redaction redaction-name"></span></p>
+						<p>PESEL: <span class="redaction redaction-pesel"></span></p>
+						<p>Adres: ul. <span class="redaction redaction-address"></span></p>
+					</div>
+					<figcaption class="info-passed">
+						<svg class="passed-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+						<span>Zamazane miejsca są puste — dane spod prostokątów zostały trwale usunięte.</span>
+					</figcaption>
+				</figure>
+			</div>
+		</section>
+
+		<section aria-labelledby="u-ciebie">
+			<h2 id="u-ciebie">Plik zostaje u Ciebie</h2>
+			<div class="info-body">
+				<p>Dokument nie jest nigdzie wysyłany: ani do nas, ani nigdzie indziej. Program działa w Twojej przeglądarce i wszystko robi na miejscu, na Twoim urządzeniu.</p>
+				<p>Łatwo to sprawdzić. Gdy Zamaż PDF się wczyta, wyłącz internet i zamaż dokument. Wszystko zadziała tak samo.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="uwaga">
+			<h2 id="uwaga">Czego program sam nie zauważy</h2>
+			<div class="info-body">
+				<p>Program szuka w tekście dokumentu. Sam nie zauważy:</p>
+				<ul>
+					<li>imion i nazwisk: wpisz je w „Szukaj i zamaż”;</li>
+					<li>podpisów, pieczątek i zdjęć;</li>
+					<li>kodów QR i kreskowych;</li>
+					<li>tekstu w dokumentach zeskanowanych albo sfotografowanych: tam zaznacz wszystko ręcznie;</li>
+					<li>adresu strony i daty, które przeglądarka dopisuje na górze i na dole wydruku ze strony internetowej.</li>
+				</ul>
+				<p>Zamazane słowo znika, ale widać, jak szeroki jest prostokąt. Jeśli ktoś ma krótką listę nazwisk, może po szerokości zgadnąć, które to było. Gdy to ważne, zamaż szerzej, na przykład całą linię.</p>
+				<p class="info-stress">Dlatego po zapisie zawsze obejrzyj plik. Program pokaże go od razu.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="dodatki">
+			<h2 id="dodatki">Dodatki w przeglądarce</h2>
+			<div class="info-body">
+				<p>Dodatki zainstalowane w przeglądarce widzą wszystko, co jest na ekranie, także Twój dokument. Jeśli nie wiesz, jakie dodatki masz, otwórz Zamaż PDF w oknie prywatnym, bo zwykle są w nim wyłączone. Na komputerze w Edge naciśnij Ctrl+Shift+N, a w Firefoksie Ctrl+Shift+P.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="za-darmo">
+			<h2 id="za-darmo">Za darmo i bez konta</h2>
+			<div class="info-body">
+				<p>Zamaż PDF jest darmowy, bez zakładania konta i bez reklam. Pytania i uwagi: <a class="link" href="mailto:kontakt@vespero-studio.pl">kontakt@vespero-studio.pl</a>.</p>
+				<p>Więcej o tym, co dzieje się z Twoimi danymi: <a class="link" href="polityka-prywatnosci.html">Polityka prywatności</a>.</p>
+			</div>
+		</section>
+
+		<footer class="info-close">
+			<a class="button" href="index.html">Otwórz Zamaż PDF</a>
+			<p class="privacy">
+				<svg class="privacy-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+				Plik nie opuszcza Twojego urządzenia
+			</p>
+		</footer>
+	</main>
+</div>
+</body>
+</html>

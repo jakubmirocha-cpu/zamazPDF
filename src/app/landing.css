@@ -1,0 +1,897 @@
+/* The page under the start screen (zamazpdf.pl; Landing.tsx): the app's own pieces at true size are the pictures. Same type,
+   colours and two alignment lines as the start screen: the page margin, and the drop field's left edge. */
+
+.landing {
+	--col: clamp(16rem, 25vw, 24rem); /* the start screen's left column */
+	--gap: clamp(7.5rem, 16vh, 13.75rem); /* between sections: clearly more than anything inside one */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+	--ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+	padding: 0 var(--margin);
+	overflow-x: clip; /* the privacy band bleeds to the window's edges */
+}
+
+.landing > section {
+	margin-top: var(--gap);
+}
+
+.landing-title {
+	font-size: var(--step-head);
+	font-weight: 500;
+	line-height: 0.98;
+	letter-spacing: -0.045em;
+	max-width: 14ch;
+	text-wrap: balance;
+}
+
+.landing-statement {
+	margin-top: 1.5rem;
+	max-width: 34ch;
+	font-size: var(--step-lead);
+	line-height: 1.3;
+	letter-spacing: -0.015em;
+	text-wrap: pretty;
+}
+
+/* Pieces of the app keep its own conventions inside (data-ui): paper, black bars, the sage selection. */
+.landing [data-ui] {
+	font-size: 1rem;
+}
+
+/* Pod spodem nic nie ma: two papers with a black bar over a PESEL, to push aside -------------------------- */
+
+.peel-copy {
+	max-width: 46rem;
+}
+
+.peel-shutter {
+	margin-top: 3rem;
+}
+
+.peel-stage {
+	padding: clamp(1.5rem, 4vw, 4rem) clamp(1.25rem, 4vw, 4rem) clamp(2rem, 5vw, 4.5rem);
+	background: var(--surface);
+	border-radius: var(--radius);
+}
+
+.peel-hint {
+	font-weight: 500;
+}
+
+.peel-cards {
+	margin-top: 1.75rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2rem clamp(1.5rem, 3vw, 3rem);
+}
+
+.peel-card {
+	width: min(100%, 24rem);
+}
+
+.peel-label {
+	margin-bottom: 0.75rem;
+	font-weight: 500;
+}
+
+.peel-paper {
+	padding: 1.75rem 2rem 2rem;
+	background: var(--paper);
+	color: var(--paper-ink);
+	line-height: 1.8;
+}
+
+.peel-paper-title {
+	font-weight: 600;
+}
+
+.peel-paper-place {
+	margin-bottom: 0.6rem;
+}
+
+.peel-slot {
+	position: relative;
+	display: inline-block;
+	width: 7.9em;
+	vertical-align: top;
+}
+
+.peel-under {
+	font-variant-numeric: tabular-nums;
+}
+
+.peel-bar {
+	position: absolute;
+	left: -0.15em;
+	top: 0.32em;
+	width: 7.6em;
+	height: 1.2em;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: var(--redaction);
+	cursor: grab;
+	touch-action: pan-y; /* sideways is the bar's; up and down still scroll the page */
+	transition: transform 520ms var(--ease-out);
+}
+
+.peel-bar.is-dragging {
+	cursor: grabbing;
+	transition: none;
+}
+
+.peel-bar:focus-visible {
+	outline: 3px solid var(--paper-accent);
+	outline-offset: 3px;
+}
+
+.peel-result {
+	min-height: 3em; /* room for the answer, so nothing jumps when it comes */
+	margin-top: 0.85rem;
+	max-width: 24rem;
+	font-weight: 500;
+}
+
+.peel-card.is-plain .peel-result {
+	color: var(--error);
+}
+
+/* Jak to działa: three statements, the piece beside them following the one in the middle of the window ---- */
+
+.steps-title {
+	font-size: var(--step-lead);
+	font-weight: 500;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+
+.step {
+	padding-block: 2.5rem;
+}
+
+/* The statement the piece shows is in full ink; the others step back, still easy to read. */
+.step-lead {
+	color: var(--muted);
+	transition: color 300ms ease;
+	font-size: var(--step-lead);
+	font-weight: 500;
+	line-height: 1.25;
+	letter-spacing: -0.015em;
+}
+
+.step.is-active .step-lead {
+	color: var(--ink);
+}
+
+.step-text {
+	margin-top: 0.75rem;
+	max-width: 30ch;
+}
+
+.steps-stage {
+	margin-top: 2rem;
+}
+
+.steps-sticky {
+	padding: clamp(1.25rem, 4vw, 3.5rem);
+	background: var(--surface);
+	border-radius: var(--radius);
+}
+
+.steps-piece {
+	position: relative;
+	width: min(100%, 34rem);
+	aspect-ratio: 1 / 0.82;
+}
+
+.steps-state {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	visibility: hidden; /* the states not shown are not there for anyone, screen readers included */
+	transform: translateY(10px);
+	transition: opacity 320ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s linear 320ms;
+	pointer-events: none;
+}
+
+.steps-state.is-active {
+	opacity: 1;
+	visibility: visible;
+	transform: none;
+	transition-delay: 0s;
+}
+
+/* The drop field with a file over it, as the app shows it: sage. */
+.piece-drop {
+	position: relative;
+	height: 100%;
+	padding: 2rem;
+	background: var(--accent);
+	color: var(--accent-ink);
+	border-radius: var(--radius);
+}
+
+.piece-drop-title {
+	max-width: 12ch;
+	font-size: var(--step-lead);
+	font-weight: 500;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+.piece-file {
+	position: absolute;
+	left: 42%;
+	top: 52%;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.7rem 1rem;
+	background: var(--paper);
+	color: var(--paper-ink);
+	border-radius: var(--radius);
+	box-shadow: 0 10px 30px rgb(0 0 0 / 0.25); /* it floats, carried by the pointer */
+	transform: rotate(-3deg);
+}
+
+.piece-file-icon {
+	width: 1.4em;
+	height: 1.4em;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.6;
+	stroke-linejoin: round;
+}
+
+.piece-file .piece-pointer {
+	left: 70%;
+	top: 60%;
+}
+
+.piece-pointer {
+	position: absolute;
+	width: 1.6rem;
+	height: 1.6rem;
+	fill: #ffffff;
+	stroke: #1c1c1c;
+	stroke-width: 1.4;
+	stroke-linejoin: round;
+}
+
+.piece-drop > .piece-pointer {
+	left: calc(42% + 9rem);
+	top: calc(52% + 1.9rem);
+}
+
+.piece-paper {
+	padding: 1.75rem 2rem;
+	background: var(--paper);
+	color: var(--paper-ink);
+	line-height: 1.85;
+}
+
+.piece-paper-title {
+	font-weight: 600;
+}
+
+.piece-box {
+	position: relative;
+	display: inline-block;
+	height: 1.15em;
+	vertical-align: -0.22em;
+	background: var(--redaction);
+}
+
+.piece-box-text {
+	visibility: hidden;
+}
+
+/* Being drawn: see-through, so one can place the edges on the text. */
+.piece-box.is-drawing {
+	background: rgb(0 0 0 / 0.55);
+}
+
+.piece-box.is-drawing .piece-box-text {
+	visibility: visible;
+	color: var(--paper-ink);
+}
+
+.piece-box.is-drawing .piece-pointer {
+	right: -1rem;
+	bottom: -1.2rem;
+}
+
+.piece-box.is-pesel {
+	width: 7em;
+}
+
+.piece-box.is-address {
+	width: 11em;
+}
+
+.piece-passed {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+	padding: 0.8rem 1rem;
+	background: var(--accent);
+	color: var(--accent-ink);
+	font-size: 0.875rem;
+	line-height: 1.4;
+}
+
+.piece-passed strong {
+	font-weight: 600;
+}
+
+.piece-passed .passed-icon {
+	width: 1.3em;
+	height: 1.3em;
+}
+
+/* Znajdź dane osobowe: the app's own list (its classes, styles.css) beside the contract it found the places in --- */
+
+.personal-stage {
+	margin-top: 3rem;
+	padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem);
+	background: var(--surface);
+	border-radius: var(--radius);
+}
+
+.personal-hint {
+	font-weight: 500;
+}
+
+.personal-pieces {
+	margin-top: 1.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 1.5rem;
+}
+
+/* The column as the app shows it beside the pages, on the page's own ground. */
+.personal-piece {
+	width: min(100%, 23rem);
+	padding-top: 0.9rem;
+	background: var(--bg);
+	border-radius: var(--radius);
+	overflow: hidden;
+}
+
+.personal-piece .personal-title {
+	padding: 0 1.25rem;
+	font-weight: 600;
+}
+
+.personal-piece .personal-show {
+	cursor: default;
+}
+
+.personal-piece .personal-foot {
+	flex-direction: row;
+	flex-wrap: wrap;
+	border-radius: 0;
+}
+
+.personal-paper {
+	flex: 1 1 22rem;
+	max-width: 36rem;
+	padding: 1.75rem 2rem 2rem;
+	background: var(--paper);
+	color: var(--paper-ink);
+	line-height: 1.85;
+}
+
+.personal-paper-text {
+	margin-top: 0.6rem;
+}
+
+.personal-paper-page {
+	margin-top: 1.5rem;
+	color: #6b6b66;
+	font-size: var(--step-small);
+}
+
+/* As on the app's pages: a marker pen over a ticked place, a black bar once it is redacted (with nothing under it:
+   the text is gone, as in the saved file). */
+.personal-mark {
+	padding: 0.12em 0;
+	transition: background-color 180ms ease;
+}
+
+.personal-mark.is-ticked {
+	background: rgb(255 208 0 / 0.45);
+}
+
+.personal-mark.is-redacted {
+	background: var(--redaction);
+}
+
+/* Pytania i odpowiedzi: each question as people ask it; on a phone the answer in a grey field under it, on a wide
+   screen all the answers in one grey field beside the questions ------------------------------------------------ */
+
+.faq-list {
+	max-width: 46rem;
+	margin: 3rem 0 0;
+	display: grid;
+	gap: 2.25rem;
+}
+
+.faq-item dt {
+	font-size: var(--step-lead);
+	font-weight: 500;
+	line-height: 1.25;
+	letter-spacing: -0.015em;
+	text-wrap: balance;
+}
+
+.faq-item dd {
+	margin: 0.75rem 0 0;
+	padding: 1.1rem 1.4rem 1.2rem;
+	background: var(--surface);
+	border-radius: var(--radius);
+	text-wrap: pretty;
+}
+
+.faq-more {
+	margin-top: 3rem;
+	font-size: var(--step-lead);
+	line-height: 1.3;
+	letter-spacing: -0.015em;
+}
+
+/* Plik zostaje u Ciebie: the one section in the other colour, bled to the window's edges ------------------- */
+
+.privacy-band {
+	--bg: #1c1c1c;
+	--surface: #262626;
+	--ink: #f1f1ef;
+	--muted: #9a9b96;
+	--accent: #8fa68e;
+	--accent-ink: #1c1c1c;
+	margin-inline: calc(-1 * var(--margin));
+	padding: clamp(4rem, 12vh, 8rem) var(--margin);
+	background: var(--bg);
+	color: var(--ink);
+}
+
+/* In the dark theme (from the system or the theme button, as in styles.css) the band is pale concrete. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .privacy-band {
+		--bg: #c8c5ba;
+		--surface: #b9b6aa;
+		--ink: #1c1c1c;
+		--muted: #4b4c47;
+		--accent: #4a6649;
+		--accent-ink: #ffffff;
+	}
+}
+
+:root[data-theme="dark"] .privacy-band {
+	--bg: #c8c5ba;
+	--surface: #b9b6aa;
+	--ink: #1c1c1c;
+	--muted: #4b4c47;
+	--accent: #4a6649;
+	--accent-ink: #ffffff;
+}
+
+.privacy-band .landing-title {
+	display: flex;
+	align-items: baseline;
+	gap: 0.25em;
+	max-width: none;
+}
+
+.privacy-band .privacy-icon {
+	width: 0.72em;
+	height: 0.72em;
+	stroke-width: 1.8;
+	align-self: center;
+}
+
+.privacy-grid {
+	margin-top: 3rem;
+	display: grid;
+	gap: 2.5rem;
+}
+
+.privacy-facts {
+	margin: 0;
+	display: grid;
+	gap: 1.25rem;
+	align-content: start;
+}
+
+.privacy-facts dt {
+	color: var(--muted);
+	font-size: var(--step-small);
+}
+
+.privacy-facts dd {
+	margin: 0.15rem 0 0;
+	font-weight: 500;
+}
+
+.privacy-text .landing-statement {
+	margin-top: 0;
+	max-width: 30ch;
+}
+
+.privacy-text p + p {
+	margin-top: 1.25rem;
+	max-width: 46ch;
+}
+
+/* Zamaż swój plik: the drop field once more, then the quiet line. A file can be dropped anywhere on the page;
+   while one is dragged in, this field turns sage like the one at the top. */
+
+.close {
+	min-height: 70vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: clamp(3rem, 10vh, 7rem) clamp(1.5rem, 4vw, 4rem);
+	background: var(--surface);
+	border-radius: var(--radius);
+	transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+
+.close.is-active {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+.close.is-active .button {
+	background: var(--accent-ink);
+	color: var(--accent);
+}
+
+.close .button {
+	margin-top: 2rem;
+}
+
+.site-footer {
+	margin-top: 30svh;
+	padding-bottom: 30px;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: baseline;
+	gap: 0.5rem 1.5rem;
+	font-size: var(--step-small);
+	color: var(--muted);
+}
+
+.site-footer-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 1.5rem;
+}
+
+.site-footer-links a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	color: var(--ink);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+	text-underline-offset: 0.2em;
+	transition: text-decoration-color 180ms ease;
+}
+
+.site-footer-links a:hover {
+	text-decoration-color: currentColor;
+}
+
+.site-footer-links a:focus-visible {
+	outline: 3px solid var(--ink);
+	outline-offset: 2px;
+}
+
+.site-footer-made {
+	text-align: right;
+}
+
+.site-footer-made .link {
+	color: var(--ink); /* links in the full ink, as the others in the line */
+}
+
+/* Wide screens: the two lines of the start screen ----------------------------------------------------------- */
+
+@media (min-width: 960px) {
+	.peel-copy,
+	.close {
+		margin-left: calc(var(--col) + var(--margin));
+	}
+
+	.personal-copy,
+	.personal-stage,
+	.faq .landing-title,
+	.faq-more {
+		margin-left: calc(var(--col) + var(--margin));
+	}
+
+	/* The questions in the left column, the answers in one grey field on the right, row by row: each answer's
+	   first line on its question's baseline. */
+	/* The field as wide as the page's other grey fields: from the second line to the right margin. */
+	.faq-list {
+		max-width: none;
+		gap: 0;
+	}
+
+	.faq-item {
+		display: grid;
+		grid-template-columns: var(--col) minmax(0, 1fr);
+		column-gap: var(--margin);
+		align-items: baseline;
+	}
+
+	/* The grey of the field is a layer of its own, the full height of the row however long the question, so the
+	   answers stay one field with no gaps; the answer lies on it. */
+	.faq-item::before {
+		content: "";
+		grid-row: 1;
+		grid-column: 2;
+		align-self: stretch;
+		background: var(--surface);
+	}
+
+	.faq-item dt {
+		grid-row: 1;
+		grid-column: 1;
+		padding: 1.1rem 1rem 1.1rem 0;
+	}
+
+	.faq-item dd {
+		grid-row: 1;
+		grid-column: 2;
+		position: relative; /* over the grey layer */
+		justify-self: start;
+		max-width: calc(62ch + 2 * clamp(1.5rem, 4vw, 4rem)); /* a comfortable line, the rest of the field open */
+		margin: 0;
+		padding: 1.1rem clamp(1.5rem, 4vw, 4rem); /* as the drop fields */
+		background: none;
+		border-radius: 0;
+	}
+
+	.faq-item:first-child :is(dt, dd) {
+		padding-top: 2rem;
+	}
+
+	.faq-item:last-child :is(dt, dd) {
+		padding-bottom: 2rem;
+	}
+
+	.faq-item:first-child::before {
+		border-radius: var(--radius) var(--radius) 0 0;
+	}
+
+	.faq-item:last-child::before {
+		border-radius: 0 0 var(--radius) var(--radius);
+	}
+
+	.peel-stage {
+		display: grid;
+		grid-template-columns: calc(var(--col) - clamp(1.25rem, 4vw, 4rem)) minmax(0, 1fr);
+		column-gap: var(--margin);
+		align-items: start;
+	}
+
+	.peel-hint {
+		padding-top: 2.6rem; /* level with the papers, under their labels */
+		max-width: 16ch;
+	}
+
+	.peel-cards {
+		margin-top: 0;
+	}
+
+	/* The statements on the left, one per screen; the piece stays in view on the right. */
+	.steps {
+		display: grid;
+		grid-template-columns: var(--col) minmax(0, 1fr);
+		column-gap: var(--margin);
+	}
+
+	.step {
+		min-height: 72vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding-block: 0;
+	}
+
+	.steps-stage {
+		margin-top: 0;
+	}
+
+	.steps-sticky {
+		position: sticky;
+		top: 14vh;
+		min-height: 72vh;
+		display: grid;
+		place-items: center start;
+	}
+
+	.privacy-band {
+		display: grid;
+		grid-template-columns: var(--col) minmax(0, 1fr);
+		column-gap: var(--margin);
+	}
+
+	.privacy-band .landing-title {
+		grid-column: 2;
+	}
+
+	.privacy-grid {
+		grid-column: 1 / -1;
+		grid-template-columns: var(--col) minmax(0, 1fr);
+		column-gap: var(--margin);
+	}
+}
+
+/* Phones and narrow windows: one column, pieces at their true size ----------------------------------------- */
+
+@media (max-width: 959px) {
+	.landing {
+		--gap: clamp(4.5rem, 11svh, 7rem);
+	}
+
+	.peel-shutter,
+	.personal-stage {
+		margin-top: 2rem;
+	}
+
+	/* The stages run to the screen's edges: on a phone every pixel of width goes to the piece in them. */
+	.peel-stage,
+	.personal-stage {
+		margin-inline: calc(-1 * var(--margin));
+		padding: 1.5rem var(--margin) 1.75rem;
+		border-radius: 0;
+	}
+
+	.peel-paper,
+	.personal-paper {
+		padding: 1.25rem 1.25rem 1.5rem;
+	}
+
+	.peel-paper-place {
+		display: none; /* the two papers are the same; a shorter one lets both show on a screen */
+	}
+
+	.peel-result {
+		min-height: 3em;
+		margin-top: 0.6rem;
+	}
+
+	.peel-cards {
+		gap: 1.25rem;
+	}
+
+	.faq-list {
+		margin-top: 2rem;
+		gap: 1.75rem;
+	}
+
+	.close {
+		min-height: 0;
+		padding: 2.5rem var(--margin) 3rem;
+		margin-inline: calc(-1 * var(--margin));
+		border-radius: 0;
+	}
+
+	.close .button {
+		width: 100%;
+	}
+
+	/* The piece first and pinned at the top; the statements pass under it, one after another, with no empty screen. */
+	.steps {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.steps-stage {
+		order: -1;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		margin-inline: calc(-1 * var(--margin));
+		padding: 0.75rem var(--margin);
+		background: var(--bg);
+	}
+
+	.steps-sticky {
+		padding: 1rem;
+	}
+
+	.steps-piece {
+		aspect-ratio: auto;
+		height: 30svh;
+		overflow: hidden;
+	}
+
+	.steps-title {
+		padding-top: 0.5rem;
+	}
+
+	.step {
+		padding-block: 1.25rem;
+		min-height: 30svh;
+	}
+
+	/* So the last statement too reaches the reading line (Landing.tsx) before the piece lets go. */
+	.steps-text {
+		padding-bottom: 4svh;
+	}
+
+	/* A pointer means nothing on a phone. */
+	.piece-pointer {
+		display: none;
+	}
+
+	.site-footer {
+		grid-template-columns: 1fr;
+		margin-top: 2.5rem;
+		padding-bottom: 24px;
+	}
+
+	.site-footer-made {
+		text-align: left;
+	}
+}
+
+/* Motion (references/motion.md): each part arrives once as it comes into view, in reading order; the stage of
+   the live piece opens like a shutter. Only with motion allowed, and only once the script has set things up
+   (.is-moving): without it, everything simply shows. */
+
+@media (prefers-reduced-motion: no-preference) {
+	.landing [data-reveal="rise"] {
+		transition:
+			opacity 700ms var(--ease-out) calc(var(--i, 0) * 90ms),
+			transform 900ms var(--ease-out) calc(var(--i, 0) * 90ms);
+	}
+
+	.landing.is-moving [data-reveal="rise"]:not(.is-in) {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+
+	/* Lists arrive row by row. */
+	.landing [data-reveal="rows"] > * {
+		transition:
+			opacity 600ms var(--ease-out) calc(var(--i, 0) * 70ms),
+			transform 800ms var(--ease-out) calc(var(--i, 0) * 70ms);
+	}
+
+	.landing.is-moving [data-reveal="rows"]:not(.is-in) > * {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	.landing [data-reveal="shutter"] > .peel-stage {
+		transition: clip-path 1100ms var(--ease-in-out);
+	}
+
+	.landing [data-reveal="shutter"] .peel-cards {
+		transition: transform 1500ms var(--ease-soft);
+	}
+
+	.landing.is-moving [data-reveal="shutter"]:not(.is-in) > .peel-stage {
+		clip-path: inset(0 0 100% 0);
+	}
+
+	.landing.is-moving [data-reveal="shutter"]:not(.is-in) .peel-cards {
+		transform: scale(1.06);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.peel-bar,
+	.steps-state,
+	.step-lead,
+	.personal-mark {
+		transition: none;
+	}
+}

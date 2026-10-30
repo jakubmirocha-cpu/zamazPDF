@@ -1,0 +1,127 @@
+<!doctype html>
+<!-- An information page: plain HTML with no script at all, styled by the app's stylesheet,
+     which has its fonts inside. The CSP lets in that stylesheet and nothing else: no script, no connection.
+     The code's version and its address on GitHub ("O serwisie") are put in by scripts/build.mjs. -->
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; font-src data:; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#ebeae6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Zamaż PDF działa w całości w Twojej przeglądarce: dokumenty, które zamazujesz, nie trafiają do nas ani nigdzie indziej. Bez plików cookies i bez śledzenia.">
+<title>Polityka prywatności — Zamaż PDF</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20x%3D%223%22%20y%3D%2210%22%20width%3D%2226%22%20height%3D%2212%22%20fill%3D%22%231c1c1c%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="info">
+	<header class="info-side">
+		<a class="wordmark" href="index.html"><span class="wordmark-mark" aria-hidden="true"></span>Zamaż PDF</a>
+		<nav class="info-nav" aria-label="O programie">
+			<a href="jak-to-dziala.html">Jak to działa</a>
+			<a href="polityka-prywatnosci.html" aria-current="page">Polityka prywatności</a>
+			<a href="https://github.com/jakubmirocha-cpu/zamazPDF" rel="noreferrer">Kod źródłowy</a>
+		</nav>
+	</header>
+
+	<main class="info-text">
+		<h1>Polityka prywatności</h1>
+		<p class="info-lead">Szanujemy Twoją prywatność. Zamaż PDF działa w całości w Twojej przeglądarce: dokumenty, które zamazujesz, nie trafiają do nas ani nigdzie indziej.</p>
+
+		<section aria-labelledby="ogolne">
+			<h2 id="ogolne">Informacje ogólne</h2>
+			<div class="info-body">
+				<p>Zamaż PDF został zaprojektowany tak, żeby nie potrzebował żadnych Twoich danych. Wszystkie operacje na plikach PDF (otwieranie, wyszukiwanie, zamazywanie, zapis) wykonywane są lokalnie, w przeglądarce, na Twoim urządzeniu.</p>
+				<p>Oznacza to, że dokumenty i dane w nich zawarte nie są przesyłane na serwer, nie są przechowywane ani analizowane przez nas. Po zamknięciu karty przeglądarki znikają z jej pamięci.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="przetwarzanie">
+			<h2 id="przetwarzanie">Przetwarzanie danych</h2>
+			<div class="info-body">
+				<p>Program wykonuje się wyłącznie w przeglądarce. Serwer tylko wysyła pliki programu, a potem przeglądarka nie pozwala stronie łączyć się z żadnym serwerem, także z naszym. Pilnuje tego polityka bezpieczeństwa treści (Content Security Policy) z ustawieniem <code>connect-src 'none'</code>, zapisana na początku strony.</p>
+				<p>Tak samo jest z tym, co wpisujesz: hasłem do pliku, szukanym nazwiskiem czy <span class="nowrap">PESEL-em</span>. W polach tekstowych wyłączone są autouzupełnianie, sprawdzanie pisowni i podpowiedzi przeglądarki, które mogłyby wysłać wpisany tekst do internetu.</p>
+				<p>W praktyce: nie gromadzimy, nie przechowujemy ani nie udostępniamy treści dokumentów. Jedynym plikiem, który program zapisuje na urządzeniu, jest zamazana kopia dokumentu, zapisywana na Twoje polecenie. Jeśli wybierzesz „Udostępnij”, Twoje urządzenie przekaże tę kopię do programu, który sam wskażesz, na przykład do poczty. Co dalej stanie się z plikiem, zależy od tego programu.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="cookies">
+			<h2 id="cookies">Pliki cookies</h2>
+			<div class="info-body">
+				<p>Serwis nie wykorzystuje plików cookies ani innych technologii śledzących. Nie śledzimy aktywności i nie zbieramy danych osobowych.</p>
+				<p>Przeglądarka przechowuje jedynie pliki samego programu, żeby otwierał się szybko i działał bez internetu, także po zainstalowaniu go jako aplikacji. Są takie same dla każdego i nie zawierają niczego Twojego.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="biblioteki">
+			<h2 id="biblioteki">Biblioteki i zasoby</h2>
+			<div class="info-body">
+				<p>Serwis wykorzystuje następujące biblioteki, przechowywane na naszym serwerze razem z programem:</p>
+				<dl class="info-facts">
+					<dt>MuPDF</dt>
+					<dd>otwieranie, podgląd, zamazywanie i zapis plików PDF</dd>
+					<dt>React</dt>
+					<dd>interfejs programu</dd>
+					<dt>Zustand</dt>
+					<dd>stan programu, np. lista zamazań</dd>
+					<dt>Hanken Grotesk</dt>
+					<dd>czcionka</dd>
+				</dl>
+				<p>Wszystkie biblioteki działają lokalnie, bez łączności z zewnętrznymi serwerami CDN. Ich licencje: <a class="link" href="licencje.txt">licencje.txt</a>.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="logi">
+			<h2 id="logi">Logi serwera</h2>
+			<div class="info-body">
+				<p>Korzystanie z serwisu wiąże się z pobraniem plików strony z serwera hostingowego (home.pl). Standardowe logi serwera mogą rejestrować adres IP, typ przeglądarki, datę i czas wizyty. Są to informacje niezbędne do utrzymania serwera i zapewnienia bezpieczeństwa.</p>
+				<p>Dane te nie są przez nas analizowane i nie mają związku z zamazywanymi dokumentami, które nigdy nie trafiają na serwer.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="o-serwisie">
+			<h2 id="o-serwisie">O serwisie</h2>
+			<div class="info-body">
+				<p>Zamaż PDF to darmowe narzędzie do trwałego zamazywania danych w plikach PDF. Kod programu jest otwarty: każdy może go przeczytać i sprawdzić, co program robi.</p>
+				<dl class="info-facts">
+					<dt>Autor</dt>
+					<dd>Jakub Mirocha</dd>
+					<dt>Studio</dt>
+					<dd>Vespero Studio</dd>
+					<dt>Wersja</dt>
+					<dd><a class="link" href="{{source}}" rel="noreferrer">{{version}}</a></dd>
+					<dt>Licencja</dt>
+					<dd>GNU AGPL-3.0, <a class="link" href="https://github.com/jakubmirocha-cpu/zamazPDF" rel="noreferrer">kod źródłowy na GitHubie</a></dd>
+				</dl>
+			</div>
+		</section>
+
+		<section aria-labelledby="odpowiedzialnosc">
+			<h2 id="odpowiedzialnosc">Wyłączenie odpowiedzialności</h2>
+			<div class="info-body">
+				<p>Narzędzie jest udostępniane w stanie „tak jak jest” (as is), bez gwarancji poprawnego działania we wszystkich przypadkach. Program sprawdza, czy pod zamazaniami nic nie zostało, ale nie wie, czy zamazano wszystko, co trzeba. Twórca nie ponosi odpowiedzialności za dane, których nie zamazano, ani za skutki użycia zapisanych plików.</p>
+				<p>Przed wysłaniem dokumentu dalej zawsze obejrzyj zapisany plik.</p>
+			</div>
+		</section>
+
+		<section aria-labelledby="kontakt">
+			<h2 id="kontakt">Kontakt</h2>
+			<div class="info-body">
+				<p>W sprawach związanych z prywatnością lub działaniem serwisu prosimy o kontakt: <a class="link" href="mailto:kontakt@vespero-studio.pl">kontakt@vespero-studio.pl</a>.</p>
+				<p class="info-note">Ostatnia zmiana: 29 października 2026 r.</p>
+			</div>
+		</section>
+
+		<footer class="info-close">
+			<a class="button" href="index.html">Otwórz Zamaż PDF</a>
+			<p class="privacy">
+				<svg class="privacy-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+				Plik nie opuszcza Twojego urządzenia
+			</p>
+		</footer>
+	</main>
+</div>
+</body>
+</html>
