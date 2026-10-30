@@ -250,6 +250,14 @@ const pl = {
 					a: "Nie ma haczyka. Nie płacisz, nie zakładasz konta, nie oglądasz reklam, a my nie zbieramy żadnych danych. Kod programu jest otwarty, więc każdy może sprawdzić, co program robi.",
 				},
 				{
+					q: "Czy muszę coś instalować? Czy zadziała na telefonie?",
+					a: "Nic nie musisz instalować. Zamaż PDF działa online, w przeglądarce, na komputerze i na telefonie. Jeśli chcesz, możesz dodać go do ekranu telefonu albo zainstalować na komputerze, a po pierwszym wczytaniu działa też bez internetu.",
+				},
+				{
+					q: "Czy mogę tak zanonimizować dokument?",
+					a: "Tak, jeśli zamażesz wszystko, po czym da się rozpoznać osobę: nie tylko nazwisko i PESEL, ale też adres, numery, podpis czy inne szczegóły. Program pomaga je znaleźć, ale to Ty decydujesz, co zamazać. Na koniec obejrzyj zapisany plik.",
+				},
+				{
 					q: "Czy program sam znajdzie wszystkie moje dane?",
 					a: "Nie wszystkie. W tekście dokumentu znajdzie numery PESEL, numery kont, telefony, adresy i e-maile. Imion i nazwisk sam nie rozpozna, nie zauważy też podpisów, pieczątek, zdjęć ani kodów QR. Dlatego po zapisie zawsze obejrzyj plik: program pokaże go od razu.",
 				},

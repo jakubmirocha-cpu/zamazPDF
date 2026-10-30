@@ -1,21 +1,23 @@
 // Builds the app into dist/: plain files that work opened from disk by double-click and, as they are, from
 // zamazpdf.pl. A browser loads scripts and stylesheets from disk but fetches nothing there,
 // so everything is a script or a stylesheet:
-//   index.html             the page, copied from src/index.html
+//   index.html             the page, from src/index.html, with the start screen and the page under it already in it
 //   app.js, app.css        the interface; the engine worker's code inside app.js, the fonts inside app.css
 //   assets/mupdf-wasm.js   MuPDF's WASM (the engine), base64-encoded in a script
 //   manifest.webmanifest   for installing the app (PWA), with the icons inside
 //   jak-to-dziala.html, polityka-prywatnosci.html   the information pages from src/pages, no scripts; the version put in
 //   licencje.txt           the licences of the code and the font inside the app
 //   .htaccess              the server's settings (Apache)
+//   robots.txt, sitemap.xml, llms.txt, og.png   for search engines, AI crawlers and link previews, from src/site
 //   sw.js                  the service worker, with the SHA-256 of every other file; from a server only
 // The worker is started from a blob: URL, so the page's CSP binds it too.
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { basename, dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { iconPng } from "./icon.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -34,8 +36,6 @@ const common = {
 	logLevel: "warning",
 	metafile: true, // which packages went in: licencje.txt
 };
-
-copyFileSync(join(root, "src/index.html"), join(dist, "index.html"));
 
 // The version, shown on the start screen with the link to its code on GitHub: its name from
 // package.json, and the commit it was built from, so anyone can compare the app with the code, and whether the
@@ -119,6 +119,64 @@ for (const icon of manifest.icons) {
 }
 writeFileSync(join(dist, "manifest.webmanifest"), `${JSON.stringify(manifest, null, "\t")}\n`);
 
+// The start screen and the page under it, in the page itself: search engines and AI crawlers read it without running
+// any script. With the questions on it as structured data, and what the program is. No script runs from there: a
+// block of data is no script to the CSP.
+const prerenderDir = mkdtempSync(join(tmpdir(), "zamazpdf-build-"));
+const prerender = await build({
+	...common,
+	entryPoints: [join(root, "src/app/prerender.tsx")],
+	format: "esm",
+	jsx: "automatic",
+	metafile: false,
+	define: {
+		"process.env.NODE_ENV": '"production"',
+		APP_VERSION: JSON.stringify(version),
+		SOURCE_URL: JSON.stringify(repository.url),
+	},
+});
+const prerenderFile = join(prerenderDir, "prerender.mjs");
+writeFileSync(prerenderFile, prerender.outputFiles[0].contents);
+// The little the theme button asks of a browser on its first render: a system in the light theme, a mouse.
+globalThis.document = { documentElement: { dataset: {} } };
+globalThis.matchMedia = () => ({ matches: false });
+const { startScreen, questions } = await import(pathToFileURL(prerenderFile).href);
+delete globalThis.document;
+delete globalThis.matchMedia;
+rmSync(prerenderDir, { recursive: true, force: true });
+const structured = [
+	{
+		"@context": "https://schema.org",
+		"@type": "WebApplication",
+		name: "Zamaż PDF",
+		url: "https://zamazpdf.pl/",
+		description: "Trwałe zamazywanie danych osobowych w plikach PDF, w całości w przeglądarce. Plik nie opuszcza urządzenia użytkownika.",
+		applicationCategory: "UtilitiesApplication",
+		operatingSystem: "Dowolny, z nowoczesną przeglądarką",
+		inLanguage: "pl",
+		isAccessibleForFree: true,
+		offers: { "@type": "Offer", price: "0", priceCurrency: "PLN" },
+		softwareVersion: versionName,
+		license: "https://www.gnu.org/licenses/agpl-3.0.html",
+		author: { "@type": "Organization", name: "Vespero Studio", url: "https://vespero-studio.pl" },
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		mainEntity: questions.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+	},
+];
+const page = readFileSync(join(root, "src/index.html"), "utf8");
+if (!page.includes('<div id="root"></div>') || !page.includes("</head>")) throw new Error("index.html has changed its shape");
+writeFileSync(
+	join(dist, "index.html"),
+	page
+		.replace("</head>", () => `<script type="application/ld+json">${JSON.stringify(structured).replaceAll("<", "\u003c")}</script>
+</head>`)
+		.replace('<div id="root"></div>', () => `<div id="root">${startScreen}</div>`),
+);
+for (const file of readdirSync(join(root, "src/site"))) copyFileSync(join(root, "src/site", file), join(dist, file));
+
 // The server's settings, with the CSP of the pages as they are: the header and the <meta> cannot drift apart.
 const cspOf = (html) => {
 	const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1];
@@ -130,16 +188,18 @@ if (pageCsps.size !== 1) throw new Error("the information pages differ in their 
 writeFileSync(
 	join(dist, ".htaccess"),
 	readFileSync(join(root, "src/.htaccess"), "utf8")
-		.replace("{{csp-app}}", cspOf(readFileSync(join(root, "src/index.html"), "utf8")))
+		.replace("{{csp-app}}", cspOf(page))
 		.replace("{{csp-pages}}", [...pageCsps][0]),
 );
 
 // Last, as it lists every other file with its SHA-256: a change in any file makes a new sw.js, and that is how the
 // browser learns of a new version. Not minified, so anyone can read what it does and which files it keeps. Not
-// .htaccess: no server gives that file out, and one file missing would stop the install.
+// .htaccess: no server gives that file out, and one file missing would stop the install. Nor what is only for
+// search engines and link previews: the app has no use for it.
+const notForTheApp = new Set([".htaccess", ...readdirSync(join(root, "src/site"))]);
 const sums = Object.fromEntries(
 	readdirSync(dist, { recursive: true, withFileTypes: true })
-		.filter((entry) => entry.isFile() && entry.name !== ".htaccess")
+		.filter((entry) => entry.isFile() && !notForTheApp.has(entry.name))
 		.map((entry) => relative(dist, join(entry.parentPath, entry.name)).replaceAll("\\", "/"))
 		.toSorted()
 		.map((path) => [path, createHash("sha256").update(readFileSync(join(dist, path))).digest("hex")]),
@@ -165,6 +225,9 @@ console.log(
 			? `commit ${version.commit.slice(0, 7)}${version.changed ? ", with changes not committed" : ""}`
 			: "commit unknown: not built from a git repository"),
 );
+
+// React's server code, used for index.html above, leaves a message channel open that would keep Node running.
+process.exit(0);
 
 function gitVersion() {
 	try {

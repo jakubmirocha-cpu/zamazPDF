@@ -38,7 +38,7 @@ npm ci
 npm run build
 ```
 
-W folderze `dist/` powstają zwykłe pliki: `index.html`, `app.js`, `app.css`, `assets/mupdf-wasm.js` (silnik MuPDF, ok. 14 MB), strony „Jak to działa” i „Polityka prywatności”, `licencje.txt`, a do instalacji ze strony `manifest.webmanifest` i `sw.js` (service worker z sumami pozostałych plików). `index.html` działa otwarty dwuklikiem z dysku, a ten sam folder idzie na serwer, razem z ukrytym plikiem `.htaccess` (ustawienia serwera Apache). Wersję w aplikacji budowanie bierze z gita; „+ zmiany” za wersją znaczy, że w folderze były zmiany spoza commita.
+W folderze `dist/` powstają zwykłe pliki: `index.html`, `app.js`, `app.css`, `assets/mupdf-wasm.js` (silnik MuPDF, ok. 14 MB), strony „Jak to działa” i „Polityka prywatności”, `licencje.txt`, a do instalacji ze strony `manifest.webmanifest` i `sw.js` (service worker z sumami pozostałych plików). Dla wyszukiwarek i podglądu linków są `robots.txt`, `sitemap.xml`, `llms.txt` i `og.png`, a treść strony jest od razu w `index.html`, także bez uruchamiania skryptów. `index.html` działa otwarty dwuklikiem z dysku, a ten sam folder idzie na serwer, razem z ukrytym plikiem `.htaccess` (ustawienia serwera Apache). Wersję w aplikacji budowanie bierze z gita; „+ zmiany” za wersją znaczy, że w folderze były zmiany spoza commita.
 
 `npm run check` sprawdza typy (TypeScript).
 

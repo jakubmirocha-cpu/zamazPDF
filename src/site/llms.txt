@@ -1,0 +1,12 @@
+# Zamaż PDF
+
+> Darmowe narzędzie w przeglądarce do trwałego zamazywania danych osobowych w plikach PDF: PESEL, nazwisko, adres, numer konta. Plik nie opuszcza urządzenia użytkownika. Bez konta i bez reklam, na komputerze i na telefonie. Kod jest otwarty.
+
+Zamazany tekst jest usuwany z pliku, a nie tylko przykrywany, więc nie da się go skopiować ani odzyskać. Program znajduje w tekście numery PESEL, numery kont, telefony, adresy i e-maile. Imiona i nazwiska trzeba wpisać w „Szukaj i zamaż”. Skany zamazuje się ręcznie. Interfejs jest po polsku.
+
+## Strony
+
+- [Zamaż PDF](https://zamazpdf.pl/): program i pytania z odpowiedziami
+- [Jak to działa](https://zamazpdf.pl/jak-to-dziala.html): jak zamazać dokument i czego program sam nie zauważy
+- [Polityka prywatności](https://zamazpdf.pl/polityka-prywatnosci.html): jakie dane są zbierane (żadne z dokumentów)
+- [Kod źródłowy](https://github.com/jakubmirocha-cpu/zamazPDF): licencja AGPL-3.0
